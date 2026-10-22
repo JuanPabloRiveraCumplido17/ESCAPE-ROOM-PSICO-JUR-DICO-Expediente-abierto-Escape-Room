@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expediente abierto Escape Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ix:clamp(14px,6vw,120px);--iy:clamp(30px,7vh,76px);--w1:#2e3b4e;--w2:#202a39;--f1:#5b3a22;--f2:#462c19;--gold:#f0c45a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:#0b0710}
+body{margin:0;overflow-x:hidden;background:#0b0710;color:#f4ecff;font:16px/1.45 "Fredoka","Trebuchet MS",system-ui,sans-serif}
+button{font:inherit;cursor:pointer}html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}button,.door{touch-action:manipulation}
+#room[data-r="1"]{--w1:#3e3350;--w2:#2a2238;--f1:#4d3b2c;--f2:#3a2b1f}
+#room[data-r="2"]{--w1:#2f4a45;--w2:#203632;--f1:#5a4630;--f2:#44331f}
+#room[data-r="3"]{--w1:#4f3a36;--w2:#382724;--f1:#3f3f46;--f2:#2e2e35}
+#room[data-r="4"]{--w1:#4a4630;--w2:#35321f;--f1:#4a2e2e;--f2:#361f1f}
+#room{position:relative;min-height:100vh;min-height:100dvh;overflow:hidden;transition:transform 1s cubic-bezier(.5,0,.9,.4),opacity 1s ease-in}
+#room.walk{transform:scale(3);opacity:0}
+#room.arrive{animation:arr .9s ease-out}
+@keyframes arr{from{opacity:0;transform:scale(1.15)}to{opacity:1;transform:none}}
+.L{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none}
+.bw{top:var(--iy);bottom:var(--iy);left:var(--ix);right:var(--ix);background:linear-gradient(transparent calc(100% - 90px),rgba(0,0,0,.25) calc(100% - 90px),rgba(0,0,0,.25) calc(100% - 86px),transparent calc(100% - 86px)),linear-gradient(to bottom,transparent calc(100% - 10px),#1a0f08 calc(100% - 10px)),repeating-linear-gradient(90deg,var(--w1) 0 26px,var(--w2) 26px 52px);box-shadow:inset 0 0 80px #000b}
+.bw::before,.bw::after{content:"";position:absolute;top:30%;width:22px;height:46px;border-radius:4px 4px 14px 14px;background:linear-gradient(#ffe9a8,#ffbe55);box-shadow:0 0 50px 24px rgba(255,190,90,.35)}
+.bw::before{left:3%}.bw::after{right:3%}
+.ceil{background:repeating-conic-gradient(from 0deg at 50% 50%,#2a2633 0 4deg,#211d2a 4deg 8deg);clip-path:polygon(0 0,100% 0,calc(100% - var(--ix)) var(--iy),var(--ix) var(--iy))}
+.floor{background:linear-gradient(to top,rgba(0,0,0,.6),transparent 70%),repeating-conic-gradient(from 0deg at 50% 50%,var(--f1) 0 2.5deg,var(--f2) 2.5deg 5deg);clip-path:polygon(0 100%,100% 100%,calc(100% - var(--ix)) calc(100% - var(--iy)),var(--ix) calc(100% - var(--iy)))}
+.lw{background:linear-gradient(to right,#0d0a14,var(--w2));clip-path:polygon(0 0,var(--ix) var(--iy),var(--ix) calc(100% - var(--iy)),0 100%)}
+.rw{background:linear-gradient(to left,#0d0a14,var(--w2));clip-path:polygon(100% 0,calc(100% - var(--ix)) var(--iy),calc(100% - var(--ix)) calc(100% - var(--iy)),100% 100%)}
+.glow{background:radial-gradient(ellipse 60% 40% at 50% 0,rgba(255,214,150,.28),transparent 70%);mix-blend-mode:screen}
+.dark{position:fixed;z-index:5;background:radial-gradient(circle at var(--mx,50%) var(--my,45%),transparent 0,rgba(0,0,0,.08) 220px,rgba(0,0,0,.55) 75%,rgba(0,0,0,.75))}
+.wall{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:calc(var(--iy) + 10px) calc(var(--ix) + 8px) calc(var(--iy) + 10px)}
+.sign{text-align:center;margin:0 auto 10px;max-width:560px;padding:8px 14px;border-radius:8px;background:linear-gradient(#6b4423,#4a2f1b);box-shadow:inset 0 0 0 3px #2a1b10,0 6px 14px #000a}
+.kicker{margin:0;letter-spacing:.2em;font-size:.66rem;color:#d9b97a}
+h1{margin:2px 0;font-size:clamp(1.15rem,4.6vw,2.1rem);line-height:1.1;color:var(--gold);text-shadow:0 2px 0 #2a1b10}
+nav{display:flex;gap:8px;justify-content:center;margin:10px 0 14px}
+nav button,.btn,#clr{border:0;border-radius:6px;padding:6px 14px;background:#3b2a1a;color:#e8d3a2;font-weight:600;box-shadow:inset 0 0 0 2px #8a6a3a}
+nav button.on,#go,#nx,#lb{background:linear-gradient(#f0c45a,#c9962b);color:#2b1a00;border:0;border-radius:8px;padding:9px 20px;font-weight:700}
+.card{background:#efe4c4;color:#2b1a00;border-radius:6px;padding:22px;max-width:440px;margin:24px auto;text-align:center;box-shadow:0 8px 20px #000a;border-top:18px solid #8c8c93}
+.card .mut,.card #msg{color:#6a5430;font-size:.9rem;min-height:1.3em}
+input{width:100%;padding:11px 14px;border-radius:8px;border:2px solid #8a6a3a;background:#fff9e6;color:#2b1a00;font:inherit;margin:12px 0}
+.bar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.85rem;color:#e8d3a2;background:rgba(20,12,8,.75);padding:4px 12px;border-radius:6px}
+.chalk{margin:10px auto;max-width:760px;text-align:center;padding:8px 16px 12px;background:#1f3d33;border:8px solid #6b4423;border-radius:6px;box-shadow:inset 0 0 30px #0008,0 6px 14px #000a}
+.tag{display:inline-block;padding:1px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.74rem;color:#cfe5d8}
+h2{margin:4px 0;font-size:clamp(1rem,3.6vw,1.35rem);color:#f1f5ee}
+.note{position:relative;max-width:640px;margin:14px auto 4px;padding:10px 14px;background:#f3e7b3;color:#3a2a00;font-size:.9rem;transform:rotate(-.7deg);box-shadow:0 4px 10px #0008}.note:empty{display:none}
+.note::before{content:"";position:absolute;top:-6px;left:50%;width:12px;height:12px;border-radius:50%;background:#d33;box-shadow:0 2px 3px #0008}
+#fb{text-align:center;min-height:1.5em;margin:8px 0}#fb .bad{margin:0;color:#ffb4a8;background:rgba(20,12,8,.75);display:inline-block;padding:3px 12px;border-radius:6px}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:22px;margin-top:14px;perspective:1100px;align-items:end}.doors.s3{grid-template-columns:repeat(3,1fr)}
+.door{cursor:pointer;display:grid;padding:0;border:0;border-radius:4px 4px 0 0;background:#2a1b10;box-shadow:0 0 0 7px #4a3320,0 0 0 9px #1c110a,0 10px 22px #000c}
+.door>*{grid-area:1/1}
+.light{background:radial-gradient(circle,#fff 0,#fff1b0 40%,#ffb54a 100%)}
+.leaf{background:var(--c);position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:clamp(270px,40vh,360px);padding:10px 8px 14px;background:linear-gradient(100deg,color-mix(in srgb,var(--c) 85%,#fff),var(--c) 30%,color-mix(in srgb,var(--c) 60%,#000));transform-origin:left center;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+.leaf::before,.leaf::after{content:"";position:absolute;left:12%;right:12%;border-radius:3px;box-shadow:inset 3px 3px 7px rgba(0,0,0,.45),inset -2px -2px 5px rgba(255,255,255,.12)}
+.leaf::before{top:7%;bottom:54%}.leaf::after{top:50%;bottom:6%}
+.num{position:relative;z-index:1;display:grid;place-items:center;min-width:30px;height:22px;padding:0 6px;border-radius:3px;background:linear-gradient(#f0c45a,#a97a1c);color:#2b1a00;font-style:normal;font-weight:700;font-size:.8rem}
+.txt{position:relative;z-index:1;margin:auto 0;padding:8px 8px;background:#f3e9c8;color:#2b1a00;font-weight:600;font-size:.76rem;line-height:1.28;text-align:center;box-shadow:0 3px 8px #0009;transform:rotate(-1.2deg)}
+.door:nth-child(even) .txt{transform:rotate(1.2deg)}
+.knob{position:absolute;z-index:1;right:7px;top:56%;width:8px;height:30px;border-radius:4px;background:linear-gradient(90deg,#fff3b0,#b9851c)}
+@media(hover:hover){.door:hover .leaf{transform:rotateY(-9deg)}}
+.door.open .leaf{transform:rotateY(-105deg)}
+.door.locked .leaf{filter:grayscale(.8) brightness(.55);animation:sh .4s}
+.door.locked .leaf .knob::after{content:"🔒";position:absolute;right:-4px;top:34px;font-size:1.2rem}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+#board,#admin{margin-top:6px;padding:14px;border-radius:10px;background:rgba(20,12,8,.82)}
+h2.t{text-align:center;color:var(--gold)}
+.row{display:grid;grid-template-columns:2.2rem 1fr minmax(50px,22%) auto;gap:10px;align-items:center;background:rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;margin:7px 0}
+.row.me{outline:2px solid var(--gold)}.row b{text-align:center;font-size:1.1rem}.row .nm{overflow-wrap:anywhere}.row em{font-style:normal;color:#c9b88f;font-size:.8rem}
+.pr{height:8px;border-radius:9px;background:#150b2b;overflow:hidden}.pr i{display:block;height:100%;background:var(--gold)}
+.mut{color:#c9b88f}table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:7px;text-align:left;border-bottom:1px solid #4a3320}.wrap{overflow-x:auto}
+#md{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))}#md[hidden]{display:none}
+.sheet{max-width:640px;width:100%;text-align:center;padding:14px 18px;border-radius:12px;background:#1c1210;border:2px solid var(--gold);box-shadow:0 10px 30px #000}
+.sheet h3{margin:0;color:#6be39b}.sheet p{margin:8px 0 12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div id="room" data-r="0">
+<i class="L ceil"></i><i class="L floor"></i><i class="L lw"></i><i class="L rw"></i><i class="L bw"></i><i class="L glow"></i>
+<div class="wall">
+<div class="sign"><p class="kicker">ESCAPE ROOM PSICO-JURÍDICO</p><h1>Expediente abierto Escape Room</h1></div>
+<nav><button data-v="play" class="on">Jugar</button><button data-v="board">Clasificación</button><button data-v="admin" id="tAdmin" hidden>Admin</button><button id="snd" aria-label="Sonido">🔊</button></nav>
+<section id="play">
+ <div id="reg" class="card"><h2 style="color:#2b1a00">Registro de visitantes</h2><p class="mut">Estás dentro. Cada puerta esconde una respuesta y solo una se abre.</p>
+ <input id="nm" maxlength="24" placeholder="Escribe tu nombre" autocomplete="nickname"><button id="go">Entrar al expediente</button><p id="msg"></p></div>
+ <div id="game" hidden><div class="bar"><span id="rm"></span><span id="pg"></span><span id="sc"></span></div>
+ <div class="chalk"><span class="tag" id="ty"></span><h2 id="q"></h2></div><div id="intro" class="note"></div><div id="fb"></div><div class="doors" id="ds"></div></div>
+ <div id="end" class="card" hidden></div>
+</section>
+<section id="board" hidden></section>
+<section id="admin" hidden></section>
+</div>
+</div>
+<i class="L dark" style="top:0;right:0;bottom:0;left:0"></i>
+<div id="md" hidden></div>
+<script>
+const R=[["La separación","Daniela salió de casa con Emilio y Renata. Camilo pide la custodia; ella pide una medida de protección por violencia psicológica y económica."],
+["Los niños","Emilio tiene pesadillas y bajó sus notas; Renata está tranquila. Emilio dijo: «No quiero ir con papá, porque se pone bravo y le grita a mi mamá»."],
+["Las pruebas","Llegan capturas de mensajes, fotos y el informe de la profesora… y Daniela se ve asustada."],
+["La valoración","La Comisaría pregunta: «¿A quién recomienda la custodia?»."],
+["El cierre","Camilo propone una reunión «para arreglar todo». Hay que cerrar el informe."]];
+const S="Semáforo del Mito",D="Decisión del Perito",E="Evidencia Sorpresa",SO=["Verde · Verdadera","Amarillo · Depende","Rojo · Falsa"];
+const Q=[
+[0,S,"«Si no hay golpes ni lesiones visibles, no hay violencia.»",SO,2,"La Ley 1257 de 2008 (art. 3) define el daño psicológico sin exigir lesiones visibles: basta degradar o controlar mediante intimidación, amenaza o humillación."],
+[0,S,"«Controlar el dinero de la pareja y exigirle justificar cada gasto puede ser violencia económica reconocida por la ley colombiana.»",SO,0,"La Ley 1257 reconoce la violencia económica y el daño patrimonial. Matiz: una discusión de gastos no basta; lo que la configura es el patrón de control y abuso."],
+[0,S,"«Si una madre sale de la casa con sus hijos, abandonó el hogar y eso la desacredita.»",SO,2,"Salir no prueba mala fe: la Ley 1257 (art. 18) contempla trasladar a la víctima y a sus hijos a un lugar seguro. Aun así, se revisa el contexto sin prejuicios."],
+[0,D,"La Comisaría pide una valoración. ¿Cuál es el primer paso de la psicóloga?",["Dar por cierta la versión de Daniela, porque la ley protege a las víctimas.","Desconfiar de la denuncia porque apareció junto al proceso de custodia.","Aclarar su rol y los límites de la confidencialidad, y planear una valoración con varias fuentes que contraste hipótesis, incluida la de que la denuncia no sea cierta.","Pedirle a Emilio que decida con quién quiere vivir."],2,"A y B son sesgos que rompen la imparcialidad (Ley 1090, art. 20); D traslada al niño una decisión que es de la autoridad. C cumple los arts. 2 y 47 de la Ley 1090."],
+[1,S,"«Un niño que presencia violencia entre sus padres puede resultar afectado aunque nunca lo golpeen.»",SO,0,"Kitzmann et al. (2003): los niños expuestos a violencia doméstica presentan peores resultados psicosociales. Matiz: no todos se afectan igual."],
+[1,D,"¿Cómo incorpora la psicóloga a Emilio y a Renata en la valoración?",["No hablar con los niños, para no exponerlos.","Escucharlos con métodos acordes a su edad, sin preguntas sugestivas ni confrontarlos con sus padres, y ponderar lo dicho con otras fuentes.","Preguntarle a Emilio con quién quiere vivir y adoptar su respuesta.","Aplicar una sola prueba proyectiva a cada niño y basarse en su resultado."],1,"La Ley 1098 (art. 26) reconoce su derecho a ser escuchados, pero escuchar no es delegar la decisión; y una sola prueba no basta (Ley 1090, art. 47)."],
+[1,E,"Emilio dijo: «No quiero ir con papá, porque se pone bravo y le grita a mi mamá». ¿Cómo lo interpreta la psicóloga?",["Como prueba de que Daniela lo manipula.","Como una verdad absoluta que obliga a suspender todo contacto con el padre.","Como la voz de un niño que se escucha y se contrasta con otros indicadores, sin quedarse con una sola explicación.","Como un dato irrelevante, por ser un menor."],2,"Una frase es un dato valioso, no un hecho probado. Atribuirla a manipulación reproduce estereotipos (T-526 de 2023); ignorarla desconoce su derecho a ser escuchado."],
+[1,S,"«El “síndrome de alienación parental” es un diagnóstico reconocido que la psicóloga puede usar para decidir una custodia.»",SO,2,"La Corte Constitucional (T-526 de 2023) señaló que no hay consenso científico: no figura en el DSM ni en la CIE-11. La Ley 1090 (art. 36) pide evitar rótulos y diagnósticos definitivos."],
+[2,E,"Daniela entrega una captura de Camilo: «Si me denuncias, te dejo sin un peso y te quito a los niños». ¿Qué hace la psicóloga con ella?",["La toma como prueba definitiva de que Camilo es violento.","La descarta, porque son capturas de pantalla.","La integra como un dato más, contrastado con otras fuentes y valorado por su contenido de amenaza y control; el valor probatorio lo decide la autoridad.","Le pide a Daniela que no entregue más mensajes."],2,"La psicóloga valora el contenido y el riesgo; la autoridad pondera la prueba. Descartarla por su formato o tomarla como prueba definitiva son sesgos."],
+[2,E,"La profesora de Emilio informa que Camilo asiste a las reuniones del colegio y es cariñoso con Renata. ¿Esto desmiente la violencia?",["Sí: un buen padre no puede ser violento con su pareja.","No, y debe ignorarse porque no se relaciona con la denuncia.","No la desmiente: es un dato sobre el vínculo con los hijos que se integra sin anular los hallazgos sobre violencia.","Sí, y obliga a darle la custodia al padre."],2,"Ser buen padre y ejercer violencia hacia la pareja pueden coexistir. Todos los datos se integran sin que uno anule al otro (Ley 1090, art. 47)."],
+[2,D,"La psicóloga percibe miedo en Daniela y conoce el mensaje con amenazas. Sin esperar el informe final, ¿qué debe hacer?",["Esperar el informe final para no adelantar conclusiones.","Valorar el riesgo con criterios estructurados y avisar de inmediato a la autoridad competente para que evalúe medidas de protección.","Aconsejar a Daniela que acepte las visitas sin condiciones para calmar el conflicto.","Citar a Camilo y a Daniela a una reunión conjunta para aclarar el mensaje."],1,"La seguridad no espera al informe: la confidencialidad cede ante un daño evidente (Ley 1090, art. 2) y la autoridad puede dictar medidas provisionales (Ley 294, art. 11)."],
+[3,S,"«Una psicóloga puede recomendar sobre la custodia basándose solo en lo que cuenta una de las partes.»",SO,2,"La Ley 1090 exige imparcialidad (art. 20) e integrar múltiples fuentes (art. 47); las directrices de la APA (2010) piden evaluar a todas las partes."],
+[3,D,"La Comisaría pregunta: «¿A quién recomienda la custodia?». ¿Qué alcance debe tener el informe?",["Recomendar la custodia a Camilo, porque tiene mayores ingresos.","Recomendar la custodia a Daniela, por ser la madre.","Describir los hallazgos y formular recomendaciones sustentadas dentro de su competencia, dejando la decisión a la autoridad.","Negarse a opinar y limitarse a transcribir lo que dijo cada parte."],2,"El informe aporta conocimiento cauto y sustentado (Ley 1090, arts. 3 y 17); la decisión es de la autoridad según el interés superior (Ley 1098, art. 8). Ni los ingresos ni el sexo del progenitor deciden."],
+[3,D,"La psicóloga que atiende a Daniela en terapia es propuesta como perita del informe de custodia. ¿Qué debe hacer?",["Aceptar, porque conoce muy bien el caso.","Aceptar, pero evaluando solo a Daniela.","Informar el conflicto de roles y no aceptar la pericia; la valoración la hace otra profesional.","Aceptar si Daniela firma un consentimiento."],2,"No se puede ser aliada terapéutica e imparcial a la vez (Ley 1090, art. 20). El consentimiento resuelve la confidencialidad, no el conflicto de intereses."],
+[4,E,"Camilo propone: «Reunámonos los tres para arreglar todo y quedarnos con la custodia compartida». ¿Qué debe considerar la psicóloga?",["Convocar la reunión de inmediato: lo mejor es que los padres se pongan de acuerdo.","Respetar que Daniela decide voluntariamente si se reúne con Camilo, y cuidar que cualquier acuerdo no ponga en riesgo a ella ni a los niños.","Obligar a Daniela a asistir, para demostrar buena voluntad.","Rechazar de plano cualquier acuerdo entre ellos."],1,"La Ley 1257 (art. 8, lit. k) reconoce el derecho de la víctima a decidir si es confrontada con el agresor. Rechazar todo acuerdo también es sesgo: puede haberlos si son voluntarios y seguros."]
+];
+let AC=null,master=null,mute=false,musicOn=false;
+function audio(){if(AC)return AC;try{if(navigator.audioSession)navigator.audioSession.type="playback";const C=window.AudioContext||window.webkitAudioContext;AC=new C();master=AC.createGain();master.gain.value=mute?0:1;master.connect(AC.destination)}catch(e){AC=null}return AC}
+function tone(f,t,d,ty,v,out){const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(out||master);o.start(t);o.stop(t+d+.05)}
+function music(){if(!audio()||musicOn)return;musicOn=true;const m=AC.createGain();m.gain.value=.2;m.connect(master);const lp=AC.createBiquadFilter();lp.type="lowpass";lp.frequency.value=420;lp.connect(m);
+ [55,55.4,82.4].forEach(f=>{const o=AC.createOscillator();o.type="sawtooth";o.frequency.value=f;const g=AC.createGain();g.gain.value=.35;o.connect(g);g.connect(lp);o.start()});
+ const seq=[220,0,261.6,0,246.9,0,329.6,0,220,0,196,0,233.1,0,174.6,0];let i=0;
+ setInterval(()=>{const f=seq[i%16],t=AC.currentTime+.05;if(f)tone(f,t,1.4,"triangle",.5,m);if(i%4===0)tone(70,t,.3,"sine",1,m);i++},480)}
+function win(){if(!audio())return;AC.resume();const t=AC.currentTime,n=AC.createBufferSource(),b=AC.createBuffer(1,Math.floor(AC.sampleRate*.7),AC.sampleRate),d=b.getChannelData(0);for(let k=0;k<d.length;k++)d[k]=Math.random()*2-1;n.buffer=b;const f=AC.createBiquadFilter(),g=AC.createGain();f.type="bandpass";f.frequency.setValueAtTime(250,t);f.frequency.linearRampToValueAtTime(800,t+.7);g.gain.setValueAtTime(.12,t);g.gain.linearRampToValueAtTime(0,t+.7);n.connect(f);f.connect(g);g.connect(master);n.start(t);
+ [523.3,659.3,784,1046.5].forEach((q,k)=>tone(q,t+.3+k*.11,.55,"triangle",.5));tone(1568,t+.75,1,"sine",.3)}
+function bad(){if(!audio())return;AC.resume();const t=AC.currentTime;tone(196,t,.3,"sawtooth",.35);tone(139,t+.25,.55,"sawtooth",.35);tone(80,t,.2,"square",.4)}
+document.getElementById("snd").onclick=function(){mute=!mute;this.textContent=mute?"🔇":"🔊";if(audio()){master.gain.value=mute?0:1;AC.resume();if(!mute)music()}};
+document.addEventListener("visibilitychange",()=>{if(AC)document.hidden?AC.suspend():AC.resume()});
+const N=Q.length,P=["#2f5d50","#7a2e2e","#2f4a7a","#6b4a2a"],SC=["#2f7d4f","#b8860b","#9b2c2c"];
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let db=null,uid=null,owner=false,rows=[],me={name:"",level:0,score:0},qi=0,wrong=0,busy=false,sure=false,door=null;
+const room=$("#room");
+document.addEventListener("pointermove",e=>{const s=document.documentElement.style;s.setProperty("--mx",e.clientX+"px");s.setProperty("--my",e.clientY+"px")});
+const save=async()=>{if(!db||!uid)return;try{await db.doc("players/"+uid).set({name:me.name,level:me.level,score:me.score,t:Date.now()})}catch(e){}};
+function view(v){["play","board","admin"].forEach(x=>$("#"+x).hidden=x!==v);document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v))}
+document.querySelector("nav").onclick=e=>{const b=e.target.closest("button");if(b&&b.dataset.v)view(b.dataset.v)};
+$("#go").onclick=async()=>{const n=$("#nm").value.trim().replace(/\s+/g," ");if(n.length<2){$("#msg").textContent="Escribe tu nombre (mínimo 2 letras).";return}
+ me.name=n;qi=me.level||0;if(audio()){AC.resume();music()}await save();$("#reg").hidden=true;ask()};
+function ask(){if(qi>=N)return fin();const [r,t,p,o]=Q[qi];wrong=0;busy=false;room.dataset.r=r;
+ $("#game").hidden=false;$("#end").hidden=true;$("#fb").innerHTML="";$("#md").hidden=true;
+ $("#rm").textContent="Puerta "+(r+1)+" · "+R[r][0];$("#pg").textContent="Reto "+(qi+1)+"/"+N;$("#sc").textContent="⭐ "+me.score+" pts";
+ $("#intro").textContent=(qi===0||Q[qi-1][0]!==r)?R[r][1]:"";$("#ty").textContent=t;$("#q").textContent=p;
+ const ord=o.map((_,i)=>i);if(t!==S)ord.sort(()=>Math.random()-.5);
+ $("#ds").className="doors"+(t===S?" s3":"");
+ $("#ds").innerHTML=ord.map((oi,k)=>`<div class="door" role="button" tabindex="0" data-i="${oi}" style="--c:${t===S?SC[oi]:P[k%4]}"><span class="light"></span><span class="leaf"><i class="num">${k+1}</i><b class="txt">${esc(o[oi])}</b><i class="knob"></i></span></div>`).join("")}
+$("#ds").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.target.click()}};
+$("#ds").onclick=e=>{const b=e.target.closest(".door");if(!b||busy||b.classList.contains("locked"))return;const x=Q[qi][5];
+ if(+b.dataset.i===Q[qi][4]){busy=true;door=b;b.classList.add("open");win();const pts=Math.max(1,3-wrong);me.score+=pts;me.level=qi+1;save();
+  setTimeout(()=>{$("#sc").textContent="⭐ "+me.score+" pts";$("#md").hidden=false;$("#md").innerHTML=`<div class="sheet"><h3>🚪✨ ¡Puerta abierta! +${pts} pts</h3><p>${x}</p><button id="nx">${qi+1<N?"Cruzar la puerta →":"Ver resultado"}</button></div>`;$("#nx").onclick=cross},900)}
+ else{wrong++;bad();b.classList.add("locked");$("#fb").innerHTML='<p class="bad">🔒 Esa puerta está cerrada con llave. Razónalo y prueba otra.</p>'}};
+function cross(){$("#md").hidden=true;if(qi+1>=N){qi++;return ask()}
+ const a=door.getBoundingClientRect(),r=room.getBoundingClientRect();room.style.transformOrigin=(a.left+a.width/2-r.left)+"px "+(a.top+a.height/2-r.top)+"px";room.classList.add("walk");
+ setTimeout(()=>{room.classList.remove("walk");room.classList.add("arrive");qi++;ask();scrollTo(0,0);setTimeout(()=>room.classList.remove("arrive"),900)},1000)}
+function fin(){$("#game").hidden=true;$("#reg").hidden=true;$("#end").hidden=false;$("#end").innerHTML=`<h2 style="color:#2b1a00">🔑 ¡Expediente abierto!</h2><p>${esc(me.name)}, cruzaste las ${N} puertas con <b>${me.score} puntos</b>.</p><button id="lb">Ver clasificación</button>`;$("#lb").onclick=()=>view("board")}
+function paint(){const s=[...rows].sort((a,b)=>(b.level||0)-(a.level||0)||(b.score||0)-(a.score||0)||(a.t||0)-(b.t||0));
+ $("#board").innerHTML=!db?'<p class="mut" style="text-align:center">La clasificación no está disponible en este modo.</p>':'<h2 class="t">🏆 Clasificación</h2>'+(s.length?s.slice(0,30).map((p,i)=>`<div class="row${p.id===uid?" me":""}"><b>${["🥇","🥈","🥉"][i]||i+1}</b><span class="nm">${esc(p.name||"?")}</span><span class="pr"><i style="width:${(p.level||0)/N*100}%"></i></span><em>${p.level||0}/${N} · ${p.score||0} pts</em></div>`).join(""):'<p class="mut" style="text-align:center">Aún no hay jugadores.</p>');
+ if(owner)$("#admin").innerHTML=`<h2 class="t">🗝️ Panel del administrador</h2><p class="mut" style="text-align:center">Solo tú ves esta tabla. ${rows.length} participante(s) registrados.</p><div class="wrap"><table><tr><th>Nombre</th><th>Reto</th><th>Puntos</th><th>Último avance</th><th></th></tr>${s.map(p=>`<tr><td>${esc(p.name||"?")}</td><td>${p.level||0}/${N}</td><td>${p.score||0}</td><td>${p.t?new Date(p.t).toLocaleString("es-CO"):""}</td><td><button class="btn" data-d="${esc(p.id)}">Eliminar</button></td></tr>`).join("")}</table></div><p style="text-align:center"><button id="clr">${sure?"¿Seguro? Clic otra vez para vaciar todo":"Vaciar clasificación"}</button></p>`}
+$("#admin").onclick=async e=>{if(!db||!owner)return;const d=e.target.closest("[data-d]");
+ if(d){try{await db.doc("players/"+d.dataset.d).delete()}catch(x){}return}
+ if(e.target.id==="clr"){if(!sure){sure=true;paint();return}sure=false;for(const p of rows){try{await db.doc("players/"+p.id).delete()}catch(x){}}}};
+(async()=>{try{const c=window.claude;if(c){const u=await c.use("user");if(u){uid=await u.id();owner=await u.isOwner()}db=uid?await c.use("db"):null}}catch(e){db=null}
+ if(db){try{const s=await db.doc("players/"+uid).get();if(s.exists){me={...me,...s.data()};$("#nm").value=me.name||"";if(me.level)$("#msg").textContent=me.level>=N?"Ya abriste el expediente.":"Tienes avance guardado: continuarás en el reto "+(me.level+1)+"."}
+  db.collection("players").onSnapshot(s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));paint()},()=>{})}catch(e){}}
+ if(!db)$("#msg").textContent="Esta versión se juega sin clasificación.";$("#tAdmin").hidden=!owner;paint()})();
+</script></body></html>
